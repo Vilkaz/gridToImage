@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+>
+>
+<h:head>
+    <h:outputScript name="js/jquery-3.1.0.js" target="head"/>
+    <h:outputScript name="js/grid.js" target="head"/>
+    <h:outputScript name="js/myImage.js" target="head"/>
+    <h:outputStylesheet library="css" name="grid.css"/>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="Grid Maker"/>
+        <div id="imageContainer">
+            <div class="inlineBlock verticalMiddle">
+                <h:graphicImage id="picture"
+                                name="img/pictures-of-medical-instruments-clipart-best-GhqKMS-clipart.jpeg"/>
+                <h:outputLabel for="linesVertical" value="Vertical Lines"/>
+                <h:inputText id="linesVertical" value="10"/>
+            </div>
+            <div>
+                <h:outputLabel for="linesHorizantal" value="Horizontal Lines"/>
+                <h:inputText id="linesHorizantal" value="10"/>
+            </div>
+        </div>
+        <h:commandButton value="makeGrid" onclick="makeGrid()"/>
+    </f:view>
+    <div id="canvasContainer">
+
+    </div>
+</h:body>
+
+</html>
