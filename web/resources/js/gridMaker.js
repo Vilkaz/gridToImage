@@ -5,8 +5,10 @@ gridMaker = {
     drawGrid: function () {
         this.pictureContainer = $('#picture');
         this.canvasContainer = $('#canvasContainer');
+        this.imgUrl = this.pictureContainer.attr("src");
         this.imgWidth = this.pictureContainer.width();
         this.imgHeight = this.pictureContainer.height();
+        this.accuracy = 1; //1 = check every pixel, 3 = every third, e.t.c.
         this.amountOfVerticalLines = $('#linesVertical').val();
         this.verticalStep = this.imgWidth / this.amountOfVerticalLines;
         this.amountOfHorizontalLines = $('#linesHorizantal').val();
@@ -19,8 +21,14 @@ gridMaker = {
          */
         $(this.canvasDiv).attr("height", this.imgHeight);
         $(this.canvasDiv).attr("width", this.imgWidth);
-        this.gContext= this.canvasDiv.getContext("2d")
-        drawGridOnCanvas(this);
+
+        /**
+         * this initialisation only works, if i get the div after it was apended.
+         * i can't just take this.canvasDiv here, it won't work
+         */
+        var c = document.getElementById("canvasID");
+        this.gContext = c.getContext("2d");
+        drawImage(this);
 
         function getCanvas() {
             var canvas = $('<canvas/>');
@@ -28,63 +36,94 @@ gridMaker = {
             var imgUrl = pictureDiv.attr("src");
             $(canvas).attr("id", "canvasID");
             $(canvas).addClass("grid");
-            $(canvas).css("background-image", "url(" + imgUrl + ")");
+            // $(canvas).css("background-image", "url(" + imgUrl + ")");
             return canvas;
         }
 
         function drawGridOnCanvas(gridMaker) {
-            var c = document.getElementById("canvasID");
-            var ctx = c.getContext("2d");
-            drawVerticlaLines(ctx,gridMaker);
-            drawHorizontalLines(ctx,gridMaker);
-            ctx.stroke();
-            // drawRectangle(ctx);
+            getJsonFromCanvas(gridMaker);
+            drawVerticlaLines(gridMaker);
+            drawHorizontalLines(gridMaker);
+            gridMaker.gContext.stroke();
         }
 
-        function drawVerticlaLines(ctx,gridMaker) {
+        function drawImage(gridMaker)
+        {
+            var base_image = new Image();
+            base_image.src = gridMaker.imgUrl;
+            base_image.onload = function(){
+                gridMaker.gContext.drawImage(base_image, 0, 0,gridMaker.imgWidth,gridMaker.imgHeight);
+                drawGridOnCanvas(gridMaker);
+            }
+        }
+
+
+        function drawVerticlaLines(gridMaker) {
             for (var x = 0; x <= gridMaker.imgWidth; x += gridMaker.verticalStep) {
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, gridMaker.imgHeight);
+                gridMaker.gContext.moveTo(x, 0);
+                gridMaker.gContext.lineTo(x, gridMaker.imgHeight);
             }
         }
 
-        function drawHorizontalLines(ctx,gridMaker) {
+        function drawHorizontalLines(gridMaker) {
             for (var y = 0; y <= gridMaker.imgHeight; y += gridMaker.horizontalStep) {
-                ctx.moveTo(0, y);
-                ctx.lineTo(gridMaker.imgWidth, y);
+                gridMaker.gContext.moveTo(0, y);
+                gridMaker.gContext.lineTo(gridMaker.imgWidth, y);
             }
         }
 
-        function drawRectangle(ctx) {
-            var lineByLineanalyses = {};
-            var lineIndex=0;
-            for (var y = 0; y <= this.imgHeight; y += this.horizontalStep) {
+        function getJsonFromCanvas(gridMaker) {
+            var lineByLineAnalyses = {};
+            var lineIndex = 0;
+            for (var y = 0; y < gridMaker.imgHeight; y += gridMaker.horizontalStep) {
                 var line = [];
-                for (var x = 0; x <= this.imgWidth; y += this.verticalStep) {
-                    if (isRectangleEmpty(ctx, x, y)) {
+                for (var x = 0; x < gridMaker.imgWidth; x += gridMaker.verticalStep) {
+                    if (isRectangleEmpty(gridMaker, x, y)) {
                         line.push(0);
                     } else {
                         line.push(1);
                     }
                     ;
                 }
-                lineByLineanalyses[lineIndex++]=line;
+                lineByLineAnalyses[lineIndex++] = line;
             }
-            console.log(lineByLineanalyses);
+            console.log(lineByLineAnalyses);
 
         };
 
-        function isRectangleEmpty(ctx, x, y) {
-            var pixels = ctx.getImageData(x, y, this.horizontalStep, this.verticalStep).data;
+        function isRectangleEmpty(gridMaker, x, y) {
+            var pixels = gridMaker.gContext.getImageData(x, y, gridMaker.verticalStep, gridMaker.horizontalStep).data;
             var empty = true;
-            $.each(pixels, function (iterator) {
-                if (pixels[iterator] != 0) {
+            var step = gridMaker.accuracy;
+            var amountOfPixels = pixels.length;
+            for (var i = 0; i < amountOfPixels; i += 4 * step) {
+                var color = ((pixels[i]+pixels[i + 1]+pixels[i + 2]));
+                if (color != 0) {
                     empty = false;
                 }
-                ;
+            }
+            drawRectangle({
+                x:x,
+                y:y,
+                empty:empty,
+                gridMaker:gridMaker
             })
+
             return empty;
         };
+
+        function drawRectangle(parameter){
+            var gContext = parameter.gridMaker.gContext;
+
+            gContext.strokeStyle = (parameter.empty)?"white":"black";
+            gContext.fillRect(
+                parameter.x,
+                parameter.y,
+                parameter.gridMaker.verticalStep,
+                parameter.gridMaker.horizontalStep);
+        }
+
+
 
         function rgbToHex(r, g, b) {
             if (r > 255 || g > 255 || b > 255)
