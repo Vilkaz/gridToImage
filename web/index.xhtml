@@ -10,7 +10,7 @@
 >
 <h:head>
     <h:outputScript name="js/jquery-3.1.0.js" target="head"/>
-    <h:outputScript name="js/grid.js" target="head"/>
+    <h:outputScript name="js/gridMaker.js" target="head"/>
     <h:outputScript name="js/myImage.js" target="head"/>
     <h:outputStylesheet library="css" name="grid.css"/>
 </h:head>
@@ -29,7 +29,7 @@
                 <h:inputText id="linesHorizantal" value="10"/>
             </div>
         </div>
-        <h:commandButton value="makeGrid" onclick="makeGrid()"/>
+        <h:commandButton value="makeGrid" onclick="gridMaker.drawGrid()"/>
     </f:view>
     <div id="canvasContainer">
 
