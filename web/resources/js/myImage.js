@@ -20,3 +20,4 @@ MyImage = {
         console.log(tmpImg.width);
     }
 }
+

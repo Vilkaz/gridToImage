@@ -16,11 +16,10 @@
 </h:head>
 <h:body>
     <f:view>
-        <h:outputLabel value="Grid Maker"/>
         <div id="imageContainer">
             <div class="inlineBlock verticalMiddle">
                 <h:graphicImage id="picture"
-                                name="img/test1.png"/>
+                                name="img/pictures-of-medical-instruments-clipart-best-GhqKMS-clipart.jpeg"/>
                 <h:outputLabel for="linesVertical" value="Vertical Lines"/>
                 <h:inputText id="linesVertical" value="6"/>
             </div>
@@ -29,7 +28,7 @@
                 <h:inputText id="linesHorizantal" value="4"/>
             </div>
         </div>
-        <h:commandButton value="makeGrid" onclick="gridMaker.drawGrid()"/>
+        <h:commandButton value="makeGrid" onclick="gridMaker.getBinaryList()"/>
     </f:view>
     <div id="canvasContainer">
 

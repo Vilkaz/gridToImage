@@ -2,17 +2,17 @@
  * Created by vkukanauskas on 29/08/2016.
  */
 gridMaker = {
-    drawGrid: function () {
+    getBinaryList: function () {
         this.pictureContainer = $('#picture');
         this.canvasContainer = $('#canvasContainer');
         this.imgUrl = this.pictureContainer.attr("src");
         this.imgWidth = this.pictureContainer.width();
         this.imgHeight = this.pictureContainer.height();
-        this.accuracy = 1; //1 = check every pixel, 3 = every third, e.t.c.
+        this.accuracy = 1; //1 = check every pixel, 3 = every third, e.t.c. use with caution ! ! !
         this.amountOfVerticalLines = $('#linesVertical').val();
-        this.verticalStep = this.imgWidth / this.amountOfVerticalLines;
+        this.verticalStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);
         this.amountOfHorizontalLines = $('#linesHorizantal').val();
-        this.horizontalStep = this.imgHeight / this.amountOfHorizontalLines;
+        this.horizontalStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);
         this.canvasDiv = getCanvas(this);
         this.canvasContainer.empty();
         this.canvasContainer.append(this.canvasDiv);
@@ -41,10 +41,17 @@ gridMaker = {
         }
 
         function drawGridOnCanvas(gridMaker) {
-            getJsonFromCanvas(gridMaker);
+            var booleanJson =  getJsonFromCanvas(gridMaker);
+            // var binaryJson = getBinaryArithmeticFromBooleans(booleanJson);
+
             drawVerticlaLines(gridMaker);
             drawHorizontalLines(gridMaker);
             gridMaker.gContext.stroke();
+        }
+
+        function getBinaryArithmeticFromBooleans(booleanJson){
+            var binaryArray=[];
+
         }
 
         function drawImage(gridMaker) {
@@ -86,12 +93,15 @@ gridMaker = {
                 lineByLineAnalyses[lineIndex++] = line;
             }
             console.log(lineByLineAnalyses);
+            return lineByLineAnalyses;
         }
 
         function isRectangleEmpty(gridMaker, x, y) {
-            var pixels = gridMaker.gContext.getImageData(x, y, gridMaker.verticalStep, gridMaker.horizontalStep).data;
+            var widthOfPixelRegion = getWidthOfPixelRegion(gridMaker, x);
+            var heigthOfPixelRegion = getHeigthOfPixelRegion(gridMaker, y);
+            var pixels = gridMaker.gContext.getImageData(x, y, widthOfPixelRegion, heigthOfPixelRegion).data;
             var empty = true;
-            var step = gridMaker.accuracy;
+            var step = Math.ceil(gridMaker.accuracy);
             var amountOfPixels = pixels.length;
             for (var i = 0; i < amountOfPixels; i += 4 * step) {
                 var isPixelEmpty = isItWhite(pixels[i], pixels[i + 1], pixels[i + 2]);
@@ -99,25 +109,21 @@ gridMaker = {
                     empty = false;
                 }
             }
-            // drawRectangle({
-            //     x: x,
-            //     y: y,
-            //     empty: empty,
-            //     gridMaker: gridMaker
-            // })
-
             return empty;
         };
 
-        function drawRectangle(parameter) {
-            var gContext = parameter.gridMaker.gContext;
+        function getWidthOfPixelRegion(gridMaker, x) {
+            if (x+ gridMaker.verticalStep> gridMaker.imgWidth) {
+                return gridMaker.imgWidth - x-1;
+            }
+            return gridMaker.verticalStep;
+        }
 
-            gContext.strokeStyle = (parameter.empty) ? "white" : "black";
-            gContext.fillRect(
-                parameter.x,
-                parameter.y,
-                parameter.gridMaker.verticalStep,
-                parameter.gridMaker.horizontalStep);
+        function getHeigthOfPixelRegion(gridMaker, y) {
+            if (y+gridMaker.verticalStep > gridMaker.imgHeight) {
+                return gridMaker.imgHeight - y-1;
+            }
+            return gridMaker.horizontalStep;
         }
 
 
