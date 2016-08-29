@@ -47,12 +47,11 @@ gridMaker = {
             gridMaker.gContext.stroke();
         }
 
-        function drawImage(gridMaker)
-        {
+        function drawImage(gridMaker) {
             var base_image = new Image();
             base_image.src = gridMaker.imgUrl;
-            base_image.onload = function(){
-                gridMaker.gContext.drawImage(base_image, 0, 0,gridMaker.imgWidth,gridMaker.imgHeight);
+            base_image.onload = function () {
+                gridMaker.gContext.drawImage(base_image, 0, 0, gridMaker.imgWidth, gridMaker.imgHeight);
                 drawGridOnCanvas(gridMaker);
             }
         }
@@ -83,13 +82,11 @@ gridMaker = {
                     } else {
                         line.push(1);
                     }
-                    ;
                 }
                 lineByLineAnalyses[lineIndex++] = line;
             }
             console.log(lineByLineAnalyses);
-
-        };
+        }
 
         function isRectangleEmpty(gridMaker, x, y) {
             var pixels = gridMaker.gContext.getImageData(x, y, gridMaker.verticalStep, gridMaker.horizontalStep).data;
@@ -97,25 +94,25 @@ gridMaker = {
             var step = gridMaker.accuracy;
             var amountOfPixels = pixels.length;
             for (var i = 0; i < amountOfPixels; i += 4 * step) {
-                var color = ((pixels[i]+pixels[i + 1]+pixels[i + 2]));
-                if (color != 0) {
+                var isPixelEmpty = isItWhite(pixels[i], pixels[i + 1], pixels[i + 2]);
+                if (!isPixelEmpty) {
                     empty = false;
                 }
             }
-            drawRectangle({
-                x:x,
-                y:y,
-                empty:empty,
-                gridMaker:gridMaker
-            })
+            // drawRectangle({
+            //     x: x,
+            //     y: y,
+            //     empty: empty,
+            //     gridMaker: gridMaker
+            // })
 
             return empty;
         };
 
-        function drawRectangle(parameter){
+        function drawRectangle(parameter) {
             var gContext = parameter.gridMaker.gContext;
 
-            gContext.strokeStyle = (parameter.empty)?"white":"black";
+            gContext.strokeStyle = (parameter.empty) ? "white" : "black";
             gContext.fillRect(
                 parameter.x,
                 parameter.y,
@@ -124,11 +121,8 @@ gridMaker = {
         }
 
 
-
-        function rgbToHex(r, g, b) {
-            if (r > 255 || g > 255 || b > 255)
-                throw "Invalid color component";
-            return ((r << 16) | (g << 8) | b).toString(16);
+        function isItWhite(r, g, b) {
+            return r + g + b == 765;
         }
 
     }

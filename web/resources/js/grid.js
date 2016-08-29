@@ -80,10 +80,9 @@ gridManager : {
                 if (pixels[iterator] != 0) {
                     empty = false;
                 }
-                ;
-            })
+            });
             return empty;
-        };
+        }
 
         function rgbToHex(r, g, b) {
             if (r > 255 || g > 255 || b > 255)
