@@ -3,8 +3,8 @@
  */
 binaryArrayGenerator = {
     getBinaryListFromImage: function (param) {
-        this.pictureContainer = $(param.pictureContainerID);
-        this.canvasContainer = $(param.canvasContainerId);;
+        this.pictureContainer = $('#'+param.pictureContainerID);
+        this.canvasContainer = $('#'+param.canvasContainerId);
         this.imgUrl = this.pictureContainer.attr("src");
         this.imgWidth = this.pictureContainer.width();
         this.imgHeight = this.pictureContainer.height();
@@ -13,7 +13,7 @@ binaryArrayGenerator = {
         this.verticalStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);// else we are checking pixels outside of visible canvas
         this.amountOfHorizontalLines = param.amountOfHorizontalLines;
         this.horizontalStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);// else we are checking pixels outside of visible canvas 
-        this.canvasDiv = getCanvas(this);
+        this.canvasDiv = getCanvas();
         this.canvasContainer.empty();
         this.canvasContainer.append(this.canvasDiv);
         /**
@@ -26,14 +26,13 @@ binaryArrayGenerator = {
          * this initialisation only works, if i get the div after it was apended.
          * i can't just take this.canvasDiv here, it won't work
          */
-        var c = document.getElementById(param.canvasContainerId);
+        var c = document.getElementById("canvasID");
         this.gContext = c.getContext("2d");
         drawImage(this);
 
         function getCanvas() {
             var canvas = $('<canvas/>');
             $(canvas).attr("id", "canvasID");
-            $(canvas).addClass("grid");
             return canvas;
         }
 
@@ -41,10 +40,11 @@ binaryArrayGenerator = {
             var booleanJson =  getJsonFromCanvas(gridMaker);
             var binaryJson = getBinaryArithmeticFromBooleans(booleanJson);
             console.log(binaryJson);
+            drawVerticlaLines(gridMaker);
+            drawHorizontalLines(gridMaker);
+            gridMaker.gContext.stroke();
             return binaryJson;
-            // drawVerticlaLines(gridMaker);
-            // drawHorizontalLines(gridMaker);
-            // gridMaker.gContext.stroke();
+
         }
 
         function getBinaryArithmeticFromBooleans(booleanJson){
@@ -55,11 +55,12 @@ binaryArrayGenerator = {
                 var array = booleanJson[index];
                 var counter = array.length-1;
                 var power=0;
-                for (;counter>0;counter--){
+                for (;counter>=0;counter--){
                     var empty = array[counter];
                     if (array[counter]==1){
-                        binaryNumber+=Math.pow(2,power++);
+                        binaryNumber+=Math.pow(2,power);
                     }
+                    power++;
                 }
                 binaryArray.push(binaryNumber);
             }
