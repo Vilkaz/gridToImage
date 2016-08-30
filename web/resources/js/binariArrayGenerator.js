@@ -1,18 +1,18 @@
 /**
  * Created by vkukanauskas on 29/08/2016.
  */
-gridMaker = {
-    getBinaryListFromImage: function () {
-        this.pictureContainer = $('#picture');
-        this.canvasContainer = $('#canvasContainer');
+binaryArrayGenerator = {
+    getBinaryListFromImage: function (param) {
+        this.pictureContainer = $(param.pictureContainerID);
+        this.canvasContainer = $(param.canvasContainerId);;
         this.imgUrl = this.pictureContainer.attr("src");
         this.imgWidth = this.pictureContainer.width();
         this.imgHeight = this.pictureContainer.height();
-        this.accuracy = 1; //1 = check every pixel, 3 = every third, e.t.c. use with caution ! ! !
-        this.amountOfVerticalLines = $('#linesVertical').val();
-        this.verticalStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);
-        this.amountOfHorizontalLines = $('#linesHorizantal').val();
-        this.horizontalStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);
+        this.accuracy = param.accuracy; //1 = check every pixel, 3 = every third, e.t.c. use with caution ! ! !
+        this.amountOfVerticalLines = param.amountOfVerticalLines;
+        this.verticalStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);// else we are checking pixels outside of visible canvas
+        this.amountOfHorizontalLines = param.amountOfHorizontalLines;
+        this.horizontalStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);// else we are checking pixels outside of visible canvas 
         this.canvasDiv = getCanvas(this);
         this.canvasContainer.empty();
         this.canvasContainer.append(this.canvasDiv);
@@ -26,13 +26,12 @@ gridMaker = {
          * this initialisation only works, if i get the div after it was apended.
          * i can't just take this.canvasDiv here, it won't work
          */
-        var c = document.getElementById("canvasID");
+        var c = document.getElementById(param.canvasContainerId);
         this.gContext = c.getContext("2d");
         drawImage(this);
 
         function getCanvas() {
             var canvas = $('<canvas/>');
-            var pictureDiv = $('#picture');
             $(canvas).attr("id", "canvasID");
             $(canvas).addClass("grid");
             return canvas;
@@ -72,6 +71,7 @@ gridMaker = {
         function drawImage(gridMaker) {
             var base_image = new Image();
             base_image.src = gridMaker.imgUrl;
+            gridMaker.gContext = c.getContext("2d");
             base_image.onload = function () {
                 gridMaker.gContext.drawImage(base_image, 0, 0, gridMaker.imgWidth, gridMaker.imgHeight);
                 drawGridOnCanvas(gridMaker);

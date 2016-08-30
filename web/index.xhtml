@@ -10,7 +10,7 @@
 >
 <h:head>
     <h:outputScript name="js/jquery-3.1.0.js" target="head"/>
-    <h:outputScript name="js/gridMaker.js" target="head"/>
+    <h:outputScript name="js/binariArrayGenerator.js" target="head"/>
     <h:outputScript name="js/myImage.js" target="head"/>
     <h:outputStylesheet library="css" name="grid.css"/>
 </h:head>
@@ -28,7 +28,7 @@
                 <h:inputText id="linesHorizantal" value="4"/>
             </div>
         </div>
-        <h:commandButton value="makeGrid" onclick="gridMaker.getBinaryList()"/>
+        <h:commandButton value="makeGrid" onclick="getBinaryOnClick()"/>
     </f:view>
     <div id="canvasContainer">
 

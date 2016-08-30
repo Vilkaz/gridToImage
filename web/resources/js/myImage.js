@@ -21,3 +21,14 @@ MyImage = {
     }
 }
 
+function getBinaryOnClick(){
+    var param ={
+        pictureContainerID:"picture",
+        canvasContainerId:"canvasContainer",
+        amountOfVerticalLines:$('#linesVertical').val(),
+        amountOfHorizontalLines:$('#linesHorizantal').val(),
+        accuracy:1
+    }
+    var binaryArray = binaryArrayGenerator.getBinaryListFromImage(param);
+    console.log(binaryArray)
+}
