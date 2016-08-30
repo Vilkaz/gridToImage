@@ -33,9 +33,10 @@ binaryArrayGenerator = {
         drawImage(this);
 
         function getCanvas(id) {
-            var canvas = $('<canvas/>');
-            $(canvas).attr("id", id);
-            $(canvas).addClass("binaryGeneratorInvisibleDOMElement");
+            var canvas =$('<canvas />').attr({
+                Style: 'position:absolute; left:-5000px', //so that we don't need an css file included
+                id: id
+            })
             return canvas;
         };
 

@@ -1,8 +1,4 @@
 .inlineBlock{
     display: inline-block;
 }
-.binaryGeneratorInvisibleDOMElement{
-    position: absolute;
-    left: -5000px;
-    top: -5000px;
-}
+
