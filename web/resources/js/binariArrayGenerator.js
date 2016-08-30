@@ -3,17 +3,19 @@
  */
 binaryArrayGenerator = {
     getBinaryListFromImage: function (param) {
-        this.pictureContainer = $('#'+param.pictureContainerID);
-        this.canvasContainer = $('#'+param.canvasContainerId);
+        this.pictureContainer = $('#' + param.pictureContainerID);
+        this.canvasContainer = $('#' + param.canvasContainerId);
         this.imgUrl = this.pictureContainer.attr("src");
+
         this.imgWidth = this.pictureContainer.width();
         this.imgHeight = this.pictureContainer.height();
         this.accuracy = param.accuracy; //1 = check every pixel, 3 = every third, e.t.c. use with caution ! ! !
         this.amountOfVerticalLines = param.amountOfVerticalLines;
-        this.verticalStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);// else we are checking pixels outside of visible canvas
+        this.verticalStep = this.imgWidth / this.amountOfVerticalLines;
         this.amountOfHorizontalLines = param.amountOfHorizontalLines;
-        this.horizontalStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);// else we are checking pixels outside of visible canvas 
-        this.canvasDiv = getCanvas();
+        this.horizontalStep =this.imgHeight / this.amountOfHorizontalLines;
+        this.canvasID = getUniqueID();
+        this.canvasDiv = getCanvas(this.canvasID);
         this.canvasContainer.empty();
         this.canvasContainer.append(this.canvasDiv);
         /**
@@ -26,18 +28,27 @@ binaryArrayGenerator = {
          * this initialisation only works, if i get the div after it was apended.
          * i can't just take this.canvasDiv here, it won't work
          */
-        var c = document.getElementById("canvasID");
+        var c = document.getElementById(this.canvasID);
         this.gContext = c.getContext("2d");
         drawImage(this);
 
-        function getCanvas() {
+        function getCanvas(id) {
             var canvas = $('<canvas/>');
-            $(canvas).attr("id", "canvasID");
+            $(canvas).attr("id", id);
+            $(canvas).addClass("binaryGeneratorInvisibleDOMElement");
             return canvas;
+        };
+
+        function getUniqueID() {
+            var id;
+            do {
+                id = "myUniqueID"+Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 25);
+            } while ($('#' + id).length != 0)
+            return id;
         }
 
         function drawGridOnCanvas(gridMaker) {
-            var booleanJson =  getJsonFromCanvas(gridMaker);
+            var booleanJson = getJsonFromCanvas(gridMaker);
             var binaryJson = getBinaryArithmeticFromBooleans(booleanJson);
             console.log(binaryJson);
             drawVerticlaLines(gridMaker);
@@ -47,18 +58,18 @@ binaryArrayGenerator = {
 
         }
 
-        function getBinaryArithmeticFromBooleans(booleanJson){
-            var binaryArray=[];
+        function getBinaryArithmeticFromBooleans(booleanJson) {
+            var binaryArray = [];
 
-            for (var index in booleanJson){
-                var binaryNumber=0;
+            for (var index in booleanJson) {
+                var binaryNumber = 0;
                 var array = booleanJson[index];
-                var counter = array.length-1;
-                var power=0;
-                for (;counter>=0;counter--){
+                var counter = array.length - 1;
+                var power = 0;
+                for (; counter >= 0; counter--) {
                     var empty = array[counter];
-                    if (array[counter]==1){
-                        binaryNumber+=Math.pow(2,power);
+                    if (array[counter] == 1) {
+                        binaryNumber += Math.pow(2, power);
                     }
                     power++;
                 }
@@ -129,15 +140,15 @@ binaryArrayGenerator = {
         };
 
         function getWidthOfPixelRegion(gridMaker, x) {
-            if (x+ gridMaker.verticalStep> gridMaker.imgWidth) {
-                return gridMaker.imgWidth - x-1;
+            if (x + gridMaker.verticalStep > gridMaker.imgWidth) {
+                return gridMaker.imgWidth - x - 1;
             }
             return gridMaker.verticalStep;
         }
 
         function getHeigthOfPixelRegion(gridMaker, y) {
-            if (y+gridMaker.verticalStep > gridMaker.imgHeight) {
-                return gridMaker.imgHeight - y-1;
+            if (y + gridMaker.verticalStep > gridMaker.imgHeight) {
+                return gridMaker.imgHeight - y - 1;
             }
             return gridMaker.horizontalStep;
         }
