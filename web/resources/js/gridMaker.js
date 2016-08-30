@@ -6,13 +6,13 @@ gridMaker = {
         this.pictureContainer = $('#picture');
         this.canvasContainer = $('#canvasContainer');
         this.imgUrl = this.pictureContainer.attr("src");
-        this.imgWidth = this.pictureContainer.width();
-        this.imgHeight = this.pictureContainer.height();
+        this.imgWidth = Math.ceil(this.pictureContainer.width());
+        this.imgHeight = Math.ceil(this.pictureContainer.height());
         this.accuracy = 1; //1 = check every pixel, 3 = every third, e.t.c. use with caution ! ! !
         this.amountOfVerticalLines = $('#linesVertical').val();
-        this.verticalStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);
+        this.widthStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);
         this.amountOfHorizontalLines = $('#linesHorizantal').val();
-        this.horizontalStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);
+        this.heigthStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);
         this.canvasDiv = getCanvas(this);
         this.canvasContainer.empty();
         this.canvasContainer.append(this.canvasDiv);
@@ -80,14 +80,14 @@ gridMaker = {
 
 
         function drawVerticlaLines(gridMaker) {
-            for (var x = 0; x <= gridMaker.imgWidth; x += gridMaker.verticalStep) {
+            for (var x = 0; x <= gridMaker.imgWidth; x += gridMaker.widthStep) {
                 gridMaker.gContext.moveTo(x, 0);
                 gridMaker.gContext.lineTo(x, gridMaker.imgHeight);
             }
         }
 
         function drawHorizontalLines(gridMaker) {
-            for (var y = 0; y <= gridMaker.imgHeight; y += gridMaker.horizontalStep) {
+            for (var y = 0; y <= gridMaker.imgHeight; y += gridMaker.heigthStep) {
                 gridMaker.gContext.moveTo(0, y);
                 gridMaker.gContext.lineTo(gridMaker.imgWidth, y);
             }
@@ -96,9 +96,9 @@ gridMaker = {
         function getJsonFromCanvas(gridMaker) {
             var lineByLineAnalyses = {};
             var lineIndex = 0;
-            for (var y = 0; y < gridMaker.imgHeight; y += gridMaker.horizontalStep) {
+            for (var y = 0; y < gridMaker.imgHeight; y += gridMaker.heigthStep) {
                 var line = [];
-                for (var x = 0; x < gridMaker.imgWidth; x += gridMaker.verticalStep) {
+                for (var x = 0; x < gridMaker.imgWidth; x += gridMaker.widthStep) {
                     if (isRectangleEmpty(gridMaker, x, y)) {
                         line.push(0);
                     } else {
@@ -119,7 +119,7 @@ gridMaker = {
             var step = Math.ceil(gridMaker.accuracy);
             var amountOfPixels = pixels.length;
             for (var i = 0; i < amountOfPixels; i += 4 * step) {
-                var isPixelEmpty = isItWhite(pixels[i], pixels[i + 1], pixels[i + 2]);
+                var isPixelEmpty = isItWhite(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i+3]);
                 if (!isPixelEmpty) {
                     empty = false;
                 }
@@ -128,22 +128,22 @@ gridMaker = {
         };
 
         function getWidthOfPixelRegion(gridMaker, x) {
-            if (x+ gridMaker.verticalStep> gridMaker.imgWidth) {
+            if (x+ gridMaker.widthStep> gridMaker.imgWidth) {
                 return gridMaker.imgWidth - x-1;
             }
-            return gridMaker.verticalStep;
+            return gridMaker.widthStep;
         }
 
         function getHeigthOfPixelRegion(gridMaker, y) {
-            if (y+gridMaker.verticalStep > gridMaker.imgHeight) {
+            if (y+gridMaker.widthStep > gridMaker.imgHeight) {
                 return gridMaker.imgHeight - y-1;
             }
-            return gridMaker.horizontalStep;
+            return gridMaker.heigthStep;
         }
 
 
-        function isItWhite(r, g, b) {
-            return r + g + b == 765;
+        function isItWhite(r, g, b, alpha) {
+            return (r + g + b == 765 || alpha==0);
         }
 
     }
