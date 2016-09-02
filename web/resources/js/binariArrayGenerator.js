@@ -10,9 +10,9 @@ binaryArrayGenerator = {
         this.imgHeight = this.pictureContainer.height();
         this.accuracy = param.accuracy; //1 = check every pixel, 3 = every third, e.t.c. use with caution ! ! !
         this.amountOfVerticalLines = param.amountOfVerticalLines;
-        this.widthStep = Math.ceil(this.imgWidth / this.amountOfVerticalLines);
+        this.gridPixelWidth = Math.ceil(this.imgWidth / this.amountOfVerticalLines);
         this.amountOfHorizontalLines = param.amountOfHorizontalLines;
-        this.heigthStep = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);
+        this.gridPixelHeight = Math.ceil(this.imgHeight / this.amountOfHorizontalLines);
         this.canvasID = getUniqueID();
         this.canvasDiv = getCanvas(this.canvasID);
         this.canvasContainer.empty();
@@ -77,7 +77,7 @@ binaryArrayGenerator = {
             var base_image = new Image();
             base_image.src = gridMaker.imgUrl;
             gridMaker.gContext = c.getContext("2d");
-            base_image.onload = function () {
+            return base_image.onload = function () {
                 gridMaker.gContext.drawImage(base_image, 0, 0, gridMaker.imgWidth, gridMaker.imgHeight);
                 return getArrayFromCanvas(gridMaker);
             }
@@ -86,9 +86,9 @@ binaryArrayGenerator = {
         function getJsonFromCanvas(gridMaker) {
             var lineByLineAnalyses = {};
             var lineIndex = 0;
-            for (var y = 0; y < gridMaker.imgHeight; y += gridMaker.heigthStep) {
+            for (var y = 0; y < gridMaker.imgHeight; y += gridMaker.gridPixelHeight) {
                 var line = [];
-                for (var x = 0; x < gridMaker.imgWidth; x += gridMaker.widthStep) {
+                for (var x = 0; x < gridMaker.imgWidth; x += gridMaker.gridPixelWidth) {
                     if (isRectangleEmpty(gridMaker, x, y)) {
                         line.push(0);
                     } else {
@@ -116,17 +116,17 @@ binaryArrayGenerator = {
         };
 
         function getWidthOfPixelRegion(gridMaker, x) {
-            if (x + gridMaker.widthStep > gridMaker.imgWidth) {
+            if (x + gridMaker.gridPixelWidth > gridMaker.imgWidth) {
                 return gridMaker.imgWidth - x;
             }
-            return gridMaker.widthStep;
+            return gridMaker.gridPixelWidth;
         }
 
         function getHeigthOfPixelRegion(gridMaker, y) {
-            if (y + gridMaker.heigthStep > gridMaker.imgHeight) {
+            if (y + gridMaker.gridPixelHeight > gridMaker.imgHeight) {
                 return gridMaker.imgHeight - y;
             }
-            return gridMaker.heigthStep;
+            return gridMaker.gridPixelHeight;
         }
 
 
@@ -134,7 +134,5 @@ binaryArrayGenerator = {
             return (r + g + b == 765 || alpha == 0);//765 is not always achieved, if working with jpg, try lower value       }
 
         }
-
-
     }
 }
