@@ -15,7 +15,8 @@ imageScanner = {
 
     getBinaryListFromImage: function (param) {
         this.initGivenParameters(param);
-        var binaryArray = this.getImageScan();
+        var is = this;
+        var binaryArray = this.getImageScan(is.getArrayFromCanvas);
         return binaryArray;
     },
 
@@ -34,16 +35,20 @@ imageScanner = {
     drawImageOnCanvas: function () {
         this.gContext.drawImage(this.myImage, 0, 0, this.imageWidth, this.imageHeight);
     },
-    getImageScan: function() {
+    getImageScan: function(callback) {
+        console.log("initialise image loading");
         this.myImage.src = imageScanner.imgUrl;
         var is = this;
+        var call = callback;
         return  is.getArrayFromCanvas(this.myImage.onload = function () {
+            console.log("image is loaded");
             is.imageHeight = is.myImage.height;
             is.imageWidth = is.myImage.width;
             is.appendCanvasToBody();
             is.initGraphicalContent();
             is.drawImageOnCanvas();
-            console.log("image is loaded");
+            var test =  call();
+            debugger;
         })
     },
     appendCanvasToBody: function () {
