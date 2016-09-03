@@ -11,6 +11,7 @@ imageScanner = {
     canvasID: "",
     canvas: "",
     gContent: "",
+    accuracy:1,//1 = check every pixel, 10 = every tenth e.t.c.
 
     initGivenParameters: function (param) {
         /**
@@ -27,7 +28,7 @@ imageScanner = {
     drawImageOnCanvas: function () {
         this.gContext.drawImage(this.myImage, 0, 0, this.imageWidth, this.imageHeight);
     },
-    createCanvas: function () {
+    getImageScan: function () {
         this.myImage.src = imageScanner.imgUrl;
         var is = this;
         this.myImage.onload = function () {
@@ -36,8 +37,9 @@ imageScanner = {
             is.appendCanvasToBody();
             is.initGraphicalContent();
             is.drawImageOnCanvas();
-            var json = is.getJsonFromCanvas();
-            debugger;
+            var jsonOfBooleans = is.getJsonFromCanvas();
+            console.log(jsonOfBooleans);
+            return is.getBinaryArithmeticFromBooleans(jsonOfBooleans);
         }
 
     },
@@ -55,7 +57,7 @@ imageScanner = {
     },
     getBinaryListFromImage: function (param) {
         this.initGivenParameters(param);
-        this.createCanvas();
+        return this.getImageScan();
     },
     getCanvas: function () {
         var is = this;
@@ -91,10 +93,10 @@ imageScanner = {
     },
     isRectangleEmpty: function (x, y) {
         var widthOfPixelRegion = this.getWidthOfPixelRegion(x);
-        var heigthOfPixelRegion = this.getHeigthOfPixelRegion(y);
-        var pixels = this.gContext.getImageData(x, y, widthOfPixelRegion, heigthOfPixelRegion).data;
+        var heightOfPixelRegion = this.getHeigthOfPixelRegion(y);
+        var pixels = this.gContext.getImageData(x, y, widthOfPixelRegion, heightOfPixelRegion).data;
         var empty = true;
-        var step = gridMaker.accuracy;
+        var step = this.accuracy;
         var is = this;
         for (var i = 0; i < pixels.length; i += 4 * step) {
             var isPixelEmpty = is.isItWhite(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]);
@@ -124,7 +126,25 @@ imageScanner = {
     isItWhite: function (r, g, b, alpha) {
         return (r + g + b == 765 || alpha == 0);//765 is not always achieved, if working with jpg, try lower value       }
 
+    },
+    getBinaryArithmeticFromBooleans : function(booleanJson) {
+    var binaryArray = [];
+
+    for (var index in booleanJson) {
+        var binaryNumber = 0;
+        var array = booleanJson[index];
+        var counter = array.length - 1;
+        var power = 0;
+        for (; counter >= 0; counter--) {
+            if (array[counter] == 1) {
+                binaryNumber += Math.pow(2, power);
+            }
+            power++;
+        }
+        binaryArray.push(binaryNumber);
     }
+    return binaryArray;
+}
 
 
 }

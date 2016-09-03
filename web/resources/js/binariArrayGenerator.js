@@ -70,7 +70,6 @@ binaryArrayGenerator = {
             }
             console.log(binaryArray);
             return binaryArray;
-
         }
 
         function getBinaryArrayFromImage(gridMaker) {

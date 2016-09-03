@@ -13,10 +13,9 @@ function getBinaryOnClick() {
 
 
     var param2 = {
-        imageURL : "http://www.clker.com/cliparts/L/X/7/n/H/j/transparent-arrow-hi.png",
+        imageURL : "http://localhost:8080/javax.faces.resource/img/test4Corners.png.xhtml",
         gridPixelWidth: 10,
         gridPixelHeight: 20
     }
-    var test2 = imageScanner.getBinaryListFromImage(param2);
-    console.log(test2);
+    console.log(imageScanner.getBinaryListFromImage(param2));
 }
