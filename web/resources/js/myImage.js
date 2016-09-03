@@ -13,9 +13,11 @@ function getBinaryOnClick() {
 
 
     var param2 = {
-        imageURL : "http://localhost:8080/javax.faces.resource/img/test4Corners.png.xhtml",
+        imageURL: "http://localhost:8080/javax.faces.resource/img/test4Corners.png.xhtml",
         gridPixelWidth: 10,
         gridPixelHeight: 20
     }
-    console.log(imageScanner.getBinaryListFromImage(param2));
+    var array = imageScanner.getBinaryListFromImage(param2)
+    console.log(array);
+
 }

@@ -11,7 +11,13 @@ imageScanner = {
     canvasID: "",
     canvas: "",
     gContent: "",
-    accuracy:1,//1 = check every pixel, 10 = every tenth e.t.c.
+    accuracy: 1,//1 = check every pixel, 10 = every tenth e.t.c.
+
+    getBinaryListFromImage: function (param) {
+        this.initGivenParameters(param);
+        var binaryArray = this.getImageScan();
+        return binaryArray;
+    },
 
     initGivenParameters: function (param) {
         /**
@@ -28,20 +34,17 @@ imageScanner = {
     drawImageOnCanvas: function () {
         this.gContext.drawImage(this.myImage, 0, 0, this.imageWidth, this.imageHeight);
     },
-    getImageScan: function () {
+    getImageScan: function() {
         this.myImage.src = imageScanner.imgUrl;
         var is = this;
-        this.myImage.onload = function () {
+        return  is.getArrayFromCanvas(this.myImage.onload = function () {
             is.imageHeight = is.myImage.height;
             is.imageWidth = is.myImage.width;
             is.appendCanvasToBody();
             is.initGraphicalContent();
             is.drawImageOnCanvas();
-            var jsonOfBooleans = is.getJsonFromCanvas();
-            console.log(jsonOfBooleans);
-            return is.getBinaryArithmeticFromBooleans(jsonOfBooleans);
-        }
-
+            console.log("image is loaded");
+        })
     },
     appendCanvasToBody: function () {
         this.canvasID = this.getUniqueID();
@@ -54,10 +57,6 @@ imageScanner = {
          */
         $('#' + this.canvasID).attr("height", this.imageHeight);
         $('#' + this.canvasID).attr("width", this.imageWidth);
-    },
-    getBinaryListFromImage: function (param) {
-        this.initGivenParameters(param);
-        return this.getImageScan();
     },
     getCanvas: function () {
         var is = this;
@@ -127,24 +126,29 @@ imageScanner = {
         return (r + g + b == 765 || alpha == 0);//765 is not always achieved, if working with jpg, try lower value       }
 
     },
-    getBinaryArithmeticFromBooleans : function(booleanJson) {
-    var binaryArray = [];
+    getBinaryArithmeticFromBooleans: function (booleanJson) {
+        var binaryArray = [];
 
-    for (var index in booleanJson) {
-        var binaryNumber = 0;
-        var array = booleanJson[index];
-        var counter = array.length - 1;
-        var power = 0;
-        for (; counter >= 0; counter--) {
-            if (array[counter] == 1) {
-                binaryNumber += Math.pow(2, power);
+        for (var index in booleanJson) {
+            var binaryNumber = 0;
+            var array = booleanJson[index];
+            var counter = array.length - 1;
+            var power = 0;
+            for (; counter >= 0; counter--) {
+                if (array[counter] == 1) {
+                    binaryNumber += Math.pow(2, power);
+                }
+                power++;
             }
-            power++;
+            binaryArray.push(binaryNumber);
         }
-        binaryArray.push(binaryNumber);
+        return binaryArray;
+    },
+    getArrayFromCanvas: function () {
+        console.log("request for calculations");
+        var booleanJson = this.getJsonFromCanvas()
+        return this.getBinaryArithmeticFromBooleans(booleanJson);
     }
-    return binaryArray;
-}
 
 
 }
