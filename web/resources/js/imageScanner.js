@@ -15,9 +15,7 @@ imageScanner = {
 
     getBinaryListFromImage: function (param) {
         this.initGivenParameters(param);
-        var is = this;
-        var binaryArray = this.getImageScan();
-        return binaryArray;
+        return this.getImageScan();
     },
 
     initGivenParameters: function (param) {
@@ -35,22 +33,23 @@ imageScanner = {
     drawImageOnCanvas: function () {
         this.gContext.drawImage(this.myImage, 0, 0, this.imageWidth, this.imageHeight);
     },
-    getImageScan: function (callback) {
-        console.log("initialise image loading");
+    createCanvasWithImage: function () {
         this.myImage.src = imageScanner.imgUrl;
         var is = this;
         this.myImage.onload = function () {
-            console.log("image is loaded");
             is.imageHeight = is.myImage.height;
             is.imageWidth = is.myImage.width;
-            is.appendCanvasToBody();
-            is.initGraphicalContent();
-            is.drawImageOnCanvas();
-            return 123;
         }
-        var test = this.myImage.onload();
-        var boolean = is.getBooleanJsonFromCanvas(test);
-        return is.getBinaryArithmeticFromBooleans(boolean);
+        this.myImage.onload();
+        this.appendCanvasToBody();
+        this.initGraphicalContent();
+        this.drawImageOnCanvas();
+    },
+    getImageScan: function () {
+        this.createCanvasWithImage();
+        var boolean = this.getBooleanJsonFromCanvas();
+        $('#'+this.canvasID).remove();
+        return this.getBinaryArithmeticFromBooleans(boolean);
     },
     appendCanvasToBody: function () {
         this.canvasID = this.getUniqueID();
@@ -67,7 +66,7 @@ imageScanner = {
     getCanvas: function () {
         var is = this;
         var canvas = $('<canvas />').attr({
-            // Style: 'position:absolute; left:-5000px;right -5000', //so that we don't need an css file included
+            Style: 'position:absolute; left:-5000px;right -5000', //so that we don't need an css file included
             id: is.canvasID
         })
         return canvas;
@@ -149,12 +148,5 @@ imageScanner = {
             binaryArray.push(binaryNumber);
         }
         return binaryArray;
-    },
-    getArrayFromCanvas: function () {
-        console.log("request for calculations");
-        var booleanJson = this.getBooleanJsonFromCanvas();
-        return this.getBinaryArithmeticFromBooleans(booleanJson);
     }
-
-
-}
+ }
